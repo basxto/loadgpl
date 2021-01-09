@@ -10,7 +10,7 @@ import sys
 color = re.compile('^\s*(\d{1,3})\s+(\d{1,3})\s+(\d{1,3}).*$')
 
 # manage command line arguments
-if sys.argv[1] == '--help' or sys.argv[1] == '-h':
+if len(sys.argv) == 1 or sys.argv[1] == '--help' or sys.argv[1] == '-h':
     print("./loadgpl.py image.png palette.gpl [output.png]")
     exit(0)
 
