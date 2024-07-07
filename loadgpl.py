@@ -1,4 +1,10 @@
 #!/bin/env python3
+#Copyright (c) 2020-2024, Basxto
+#All rights reserved.
+#
+#This source code is licensed under the MIT license found in the
+#LICENSE file in the root directory of this source tree.
+
 # Loads a GIMP palette file (gpl) into an indexed image
 # This needs https://github.com/drj11/pypng
 import png
@@ -7,7 +13,7 @@ import re
 import os
 import sys
 
-color = re.compile('^\s*(\d{1,3})\s+(\d{1,3})\s+(\d{1,3}).*$')
+color = re.compile('^\\s*(\\d{1,3})\\s+(\\d{1,3})\\s+(\\d{1,3}).*$')
 
 # manage command line arguments
 if len(sys.argv) == 1 or sys.argv[1] == '--help' or sys.argv[1] == '-h':
