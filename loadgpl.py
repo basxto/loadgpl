@@ -17,13 +17,19 @@ import argparse
 color = re.compile('^\\s*(\\d{1,3})\\s+(\\d{1,3})\\s+(\\d{1,3}).*$')
 
 parser = argparse.ArgumentParser(
-                    description='Loads Gimp palette (.gpl) into an indexed PNG')
-parser.add_argument('input', metavar='input.png',
+                    description='Loads Gimp palette (.gpl) into an indexed PNG with support for subpalettes and shared colors')
+parser.add_argument('input',
                     help='input indexed PNG')
-parser.add_argument('palette', metavar='palette.gpl',
-                    help='Gimp palette')
-parser.add_argument('output', metavar='output.png',
-                    help='output indexed PNG instead of overwriting input', nargs='?')
+parser.add_argument('palette',
+                    help='Gimp palette (.gpl)')
+parser.add_argument('output', nargs='?',
+                    help='output indexed PNG instead of overwriting input')
+parser.add_argument('-c', '--colors', type=int, nargs='?', const=4, default=4,
+                    help='Amount of colors per subpalette (default: 4)')
+parser.add_argument('-s', '--shared', type=int, nargs='?', const=0, default=0,
+                    help='Amount of colors shared by all subpalettes (default: 0)')
+parser.add_argument('-u', '--subpalette', type=int,
+                    help='Replace specified subpalette (starts with 1)')
 
 args = parser.parse_args()
 
@@ -59,6 +65,17 @@ with open(palettefile) as f:
 # read original image
 r=png.Reader(filename=filename)
 original = r.read()
+
+# mix palettes
+if args.subpalette >= 1:
+    palettenew = r.palette()
+    subcolors = args.colors - args.shared
+    spbase = (args.subpalette - 1) * (args.colors - args.shared)
+    for i in range(0, args.shared):
+        palettenew[i] = palette[i]
+    for i in range(args.shared, args.colors):
+        palettenew[spbase + i] = palette[i]
+    palette = palettenew
 
 # write new image
 w = png.Writer(original[0], original[1], palette=palette, bitdepth=8)
