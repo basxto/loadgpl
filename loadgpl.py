@@ -12,28 +12,35 @@ from PIL import Image
 import re
 import os
 import sys
+import argparse
 
 color = re.compile('^\\s*(\\d{1,3})\\s+(\\d{1,3})\\s+(\\d{1,3}).*$')
 
-# manage command line arguments
-if len(sys.argv) == 1 or sys.argv[1] == '--help' or sys.argv[1] == '-h':
-    print("./loadgpl.py image.png palette.gpl [output.png]")
-    exit(0)
+parser = argparse.ArgumentParser(
+                    description='Loads Gimp palette (.gpl) into an indexed PNG')
+parser.add_argument('input', metavar='input.png',
+                    help='input indexed PNG')
+parser.add_argument('palette', metavar='palette.gpl',
+                    help='Gimp palette')
+parser.add_argument('output', metavar='output.png',
+                    help='output indexed PNG instead of overwriting input', nargs='?')
 
-filename = sys.argv[1]
+args = parser.parse_args()
+
+filename = args.input
 if filename.split('.')[-1] != 'png':
-    print("Please give a .png file", file=sys.stderr)
+    print("Please give a .png file as input", file=sys.stderr)
     exit(1)
 
-palettefile = sys.argv[2]
+palettefile = args.palette
 if palettefile.split('.')[-1] != 'gpl':
     print("Please give a .gpl file", file=sys.stderr)
     exit(1)
 
-if len(sys.argv) >= 4:
-    output = sys.argv[3]
+if args.output:
+    output = args.output
     if output.split('.')[-1] != 'png':
-        print("Please give a .png file", file=sys.stderr)
+        print("Please give a .png file as output", file=sys.stderr)
         exit(1)
 else:
     split = filename.split('.')
